@@ -1,0 +1,38 @@
+#include "test.h"
+#include <elvea/table.h>
+
+
+static
+void test_table(CuTest *tc)
+{
+	GET_RUNTIME(P, tc);
+	elvea_table_t *table = elvea_table_new(P, 8);
+	STR(s1, "hello");
+	STR(s2, "world");
+	STR(s3, "john");
+	STR(s4, "smith");
+
+	elvea_value_t key, *val;
+
+	elvea_value_init(P, &key, s1);
+	val = lua_table_insert(P, table, &key);
+	elvea_value_set(P, val, s2);
+
+	elvea_value_init(P, &key, s3);
+	val = lua_table_insert(P, table, &key);
+	elvea_value_set(P, val, s4);
+
+	elvea_value_t *res1 = elvea_table_get_string(P, table, s1);
+	CuAssertTrue(tc, elvea_string_equal(P, res1->as.string, s2));
+	elvea_value_t *res2 = elvea_table_get_string(P, table, s3);
+	CuAssertTrue(tc, elvea_string_equal(P, res2->as.string, s4));
+}
+
+CuSuite* table_test_suite()
+{
+	CuSuite *suite = CuSuiteNew();
+
+	SUITE_ADD_TEST(suite, test_table);
+
+	return suite;
+}

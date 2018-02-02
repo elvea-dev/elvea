@@ -1,0 +1,27 @@
+#include "test.h"
+#include <elvea/string.h>
+#include <elvea/set.h>
+
+
+static
+void test_set(CuTest *tc)
+{
+	GET_RUNTIME(P, tc);
+	elvea_set_t *set = elvea_set_new(P);
+	elvea_value_t value;
+	STR(s, "hello world");
+	elvea_value_init(P, &value, s);
+	elvea_set_insert(P, &set, &value);
+	elvea_value_t *result = elvea_set_find(P, set, &value);
+
+	CuAssertTrue(tc, elvea_equal(P, &value, result));
+}
+
+CuSuite* set_test_suite()
+{
+	CuSuite *suite = CuSuiteNew();
+
+	SUITE_ADD_TEST(suite, test_set);
+
+	return suite;
+}
